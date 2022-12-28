@@ -1,0 +1,517 @@
+package org.example;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+class Name {
+
+    public static void main(String[] args) {
+
+        Scanner input = new Scanner(System.in);
+        System.out.println("Welcome to Amazing Numbers!");
+        supportTxt();
+        boolean runLoop = true;
+
+        while (runLoop) {
+            System.out.println("Enter a request: ");
+            String userInput = input.nextLine();
+            String[] params = userInput.split(" ");
+            int lengthOfParams = params.length;
+            int caseNr = lengthOfParams;
+
+            for (int i = 2; i < params.length; i++) {
+                if (!checkIfPropertyExist(params[i])) {
+                    runLoop = true;
+                    break;
+                }
+            }
+
+            if (caseNr > 2) {
+                caseNr = 3;
+            }
+            switch (caseNr) {
+                case 1:
+                    if (params[0].equals("0")) {
+                        warningTxt("Goodbye!", params);
+                        runLoop = false;
+                    } else {
+                        caseIt(lengthOfParams, params);
+                    }
+                    break;
+                case 2:
+                    caseIt(lengthOfParams, params);
+                    break;
+                case 3:
+                    caseIt(lengthOfParams, params);
+                    break;
+                default:
+                    supportTxt();
+            }
+        }
+    }
+
+    private static List<String> fullListOfmagicNumberNames() {
+        return new ArrayList<>(List.of(
+                "buzz", "duck", "palindromic", "gapful", "spy",
+                "square", "sunny", "jumping", "even", "odd", "happy", "sad",
+                "-buzz", "-duck", "-palindromic", "-gapful", "-spy",
+                "-square", "-sunny", "-jumping", "-even", "-odd", "-happy", "-sad"
+        ));
+    }
+
+    private static List<String> magicNumberNames() {
+        return new ArrayList<>(List.of("buzz", "duck", "palindromic", "gapful", "spy",
+                "square", "sunny", "jumping", "even", "odd", "happy", "sad"));
+    }
+
+    private static List<String> magicNumberNegativeNames() {
+        return List.of("-buzz", "-duck", "-palindromic", "-gapful", "-spy",
+                "-square", "-sunny", "-jumping", "-even", "-odd", "-happy", "-sad");
+    }
+
+    private static LinkedList<Boolean> statements(long nr) {
+        LinkedList<Boolean> statements = new LinkedList<>();
+        statements.add(isItBuzz(nr));
+        statements.add(isItDuck(nr));
+        statements.add(isItPalindromic(nr));
+        statements.add(isItGapful(nr));
+        statements.add(isItSpy(nr));
+        statements.add(isItSquare(nr));
+        statements.add(isItSunny(nr));
+        statements.add(isItJumping(nr));
+        statements.add(isItEven(nr));
+        statements.add(!isItEven(nr));
+        statements.add(isItHappy(nr));
+        statements.add(!isItHappy(nr));
+        return statements;
+    }
+
+    private static LinkedList<Boolean> fullListOfStatements(long nr) {
+        LinkedList<Boolean> statements = new LinkedList<>();
+        statements.add(isItBuzz(nr));
+        statements.add(isItDuck(nr));
+        statements.add(isItPalindromic(nr));
+        statements.add(isItGapful(nr));
+        statements.add(isItSpy(nr));
+        statements.add(isItSquare(nr));
+        statements.add(isItSunny(nr));
+        statements.add(isItJumping(nr));
+        statements.add(isItEven(nr));
+        statements.add(!isItEven(nr));
+        statements.add(isItHappy(nr));
+        statements.add(!isItHappy(nr));
+
+        statements.add(!isItBuzz(nr));
+        statements.add(!isItDuck(nr));
+        statements.add(!isItPalindromic(nr));
+        statements.add(!isItGapful(nr));
+        statements.add(!isItSpy(nr));
+        statements.add(!isItSquare(nr));
+        statements.add(!isItSunny(nr));
+        statements.add(!isItJumping(nr));
+        statements.add(!isItEven(nr));
+        statements.add(isItEven(nr));
+        statements.add(!isItHappy(nr));
+        statements.add(isItHappy(nr));
+        return statements;
+    }
+
+    private static boolean isPropertyReturnsTrue(String property, long nr) {
+        property = property.toLowerCase();
+        HashMap<String, Boolean> propertyMap = new HashMap<>();
+
+        List<String> magicNames = fullListOfmagicNumberNames();
+        LinkedList<Boolean> statements = fullListOfStatements(nr);
+
+        for (int i = 0; i < magicNames.size(); i++) {
+            propertyMap.put(magicNames.get(i), statements.get(i));
+        }
+
+        return propertyMap.get(property);
+    }
+
+    private static String printsAllTrueStatements(long nr1, String[] arr) {
+        LinkedList<Object> trueAnswerArr = new LinkedList<>();
+        List<String> magicNames = magicNumberNames();
+        LinkedList<Boolean> statements = statements(nr1);
+
+        String result = nr1 + " is ";
+
+        for (String s : arr) {
+            s.toLowerCase();
+        }
+
+        int tempIndex = arr.length - 1;
+
+        while (tempIndex != -1) {
+            String param = arr[tempIndex];
+            int magicIndex = magicNames.indexOf(param);
+
+            if (magicIndex != -1) {
+                boolean tempFunc = statements.get(magicIndex);
+                magicNames.remove(magicIndex);
+                magicNames.add(0, param);
+                statements.remove(magicIndex);
+                statements.addFirst(tempFunc);
+            }
+            tempIndex--;
+        }
+
+        for (int x = 0; x < statements.size(); x++) {
+            if (statements.get(x)) {
+                trueAnswerArr.add(magicNames.get(x));
+            }
+        }
+
+        String arrWithBraces = String.valueOf(trueAnswerArr);
+        return result.concat(arrWithBraces.substring(1, arrWithBraces.length() - 1));
+    }
+
+    private static void caseIt(int caseNr, String[] params) {
+        String param1, param2;
+
+        if (caseNr > 2) {
+            ArrayList paramsList = new ArrayList<>();
+            paramsList.addAll(Arrays.asList(params).subList(2, params.length));
+
+            param1 = params[0];
+            param2 = params[1];
+
+            ArrayList existingParamList = new ArrayList();
+            for (int i = 2; i < params.length; i++) {
+                if (!checkIfPropertyExist(params[i])) {
+                    existingParamList.add(params[i]);
+                }
+            }
+
+            String[] existingParamArr = new String[existingParamList.size()];
+            for (int i = 0; i < existingParamArr.length; i++) {
+                existingParamArr[i] = String.valueOf(existingParamList.get(i));
+            }
+
+            String[] paramsArr = new String[paramsList.size()];
+            for (int i = 0; i < paramsArr.length; i++) {
+                paramsArr[i] = String.valueOf(paramsList.get(i));
+            }
+
+            if (!checkIfNumber(param1)) {
+                warningTxt("first", new String[0]);
+            } else if (!checkIfNumber(param2)) {
+                warningTxt("second", new String[0]);
+            } else if (existingParamList.size() > 0) {
+                warningTxt("property", existingParamArr);
+            } else if (checkIfNotMutually(paramsArr).size() != 0) {
+                warningTxt("exclusive", paramsArr);
+            } else {
+                long nr1 = Long.parseLong(param1);
+                long nr2 = Long.parseLong(param2);
+                boolean isAllStatementsTrue;
+                boolean isAllStatementsTrue2 = false;
+                boolean[] answersArr = new boolean[paramsArr.length];
+
+                long temp = 0;
+                while (temp < nr2) {
+                    for (int i = 0; i < paramsArr.length; i++) {
+                        isAllStatementsTrue = isPropertyReturnsTrue(paramsArr[i], nr1);
+                        answersArr[i] = isAllStatementsTrue;
+                    }
+
+
+                    for (boolean b : answersArr) {
+                        if (!b) {
+                            isAllStatementsTrue2 = false;
+                            break;
+                        } else {
+                            isAllStatementsTrue2 = true;
+                        }
+                    }
+
+                    if (isAllStatementsTrue2) {
+                        System.out.println(printsAllTrueStatements(nr1, paramsArr));
+                        temp++;
+                        nr1++;
+                    } else {
+                        nr1++;
+                    }
+                }
+            }
+
+        } else {
+            switch (caseNr) {
+                case 1 -> {
+                    param1 = params[0];
+                    if (!checkIfNumber(param1)) {
+                        warningTxt("first", new String[0]);
+                    } else {
+                        long userNr = Long.parseLong(param1);
+                        if (userNr != 0) {
+                            System.out.println(listOfProperties(userNr));
+                        }
+                    }
+                }
+                case 2 -> {
+                    param1 = params[0];
+                    param2 = params[1];
+                    if (!checkIfNumber(param1)) {
+                        warningTxt("first", new String[0]);
+                    } else if (!checkIfNumber(param2)) {
+                        warningTxt("second", new String[0]);
+                    } else {
+                        long nr1 = Long.parseLong(param1);
+                        long nr2 = Long.parseLong(param2);
+                        long temp = 0;
+                        while (temp != nr2) {
+                            System.out.println(printsAllTrueStatements(nr1 + temp, new String[]{}));
+                            temp++;
+                        }
+                    }
+                }
+                default -> supportTxt();
+            }
+        }
+    }
+
+    private static String listOfProperties(long nr) {
+        int largestNameSize = 0;
+        int x = 0;
+        while (x < magicNumberNames().size()) {
+            int tempSize = magicNumberNames().get(x).length();
+            if (tempSize > largestNameSize) {
+                largestNameSize = tempSize;
+            }
+            x++;
+        }
+
+        final int placeLong = largestNameSize;
+        StringBuilder resultStr = new StringBuilder("Properties of " + nr + "\n");
+        for (int i = 0; i < magicNumberNames().size(); i++) {
+            String tempName = String.valueOf(magicNumberNames().get(i));
+            int whitespaces = (placeLong - tempName.length());
+            resultStr.
+                    append(whitespaces(whitespaces)).
+                    append(tempName).
+                    append(": ").
+                    append(statements(nr).get(i));
+            if (i != magicNumberNames().size() - 1) resultStr.append("\n");
+        }
+        return String.valueOf(resultStr);
+    }
+
+    private static String whitespaces(int spaces) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < spaces; i++) {
+            result.append(" ");
+        }
+        return result.toString();
+    }
+
+    private static boolean checkIfPropertyExist(String param) {
+        boolean isItTrue = true;
+        for (int i = 0; i < fullListOfmagicNumberNames().size(); i++) {
+            if (param.equalsIgnoreCase(fullListOfmagicNumberNames().get(i))) {
+                isItTrue = true;
+                break;
+            } else {
+                isItTrue = false;
+            }
+        }
+
+        return isItTrue;
+    }
+
+    private static String showExistingPropertys(String[] propertys) {
+        ArrayList al = new ArrayList();
+        for (String property : propertys) {
+            if (!checkIfPropertyExist(property)) {
+                al.add(property);
+            }
+        }
+        String array = Arrays.toString(new ArrayList[]{al});
+        final String cutOutArray = array.toUpperCase().substring(1, array.length() - 1);
+        return cutOutArray;
+    }
+
+    private static boolean checkIfNumber(String param) {
+        if (param.matches("[0-9]+")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static void supportTxt() {
+        System.out.println("""
+                Supported requests:
+                - enter a natural number to know its properties;
+                - enter two natural numbers to obtain the properties of the list:
+                  * the first parameter represents a starting number;
+                  * the second parameter shows how many consecutive numbers are to be processed;
+                - two natural numbers and properties to search for;
+                - a property preceded by minus must not be present in numbers;
+                - separate the parameters with one space;
+                - enter 0 to exit.
+                """);
+    }
+
+    private static void warningTxt(String caseParam, String[] propertys) {
+        String array = Arrays.toString(new List[]{magicNumberNames()});
+        String propertyTxt = propertys.length == 1 ? "property" : "properties";
+        String propertyTxt2 = propertys.length == 1 ? "is" : "are";
+
+        switch (caseParam) {
+            case "first" -> System.out.println("The first parameter should be a natural number or zero.");
+            case "second" -> System.out.println("The second parameter should be a natural number.");
+            case "property" -> System.out.println("The " + propertyTxt + " " +
+                    showExistingPropertys(propertys) + " " + propertyTxt2 + " wrong.\n" +
+                    "Available properties: " + array.toUpperCase().substring(1, array.length() - 1));
+            case "exclusive" -> System.out.println(
+                    "The request contains mutually exclusive properties: " + checkIfNotMutually(propertys) + "\n" +
+                            "There are no numbers with these properties.");
+            default -> System.out.println("Goodbye!");
+        }
+    }
+
+    private static ArrayList checkIfNotMutually(String[] params) {
+
+        List mutualityStrList = new ArrayList();
+        List<String> firstRuleList;
+        List<String> secondRuleList;
+        List<String> paramsList = new LinkedList<>();
+        List<String> opositeList = new LinkedList<>();
+        firstRuleList = List.of("even", "duck", "sunny", "happy", "-even");
+        secondRuleList = List.of("odd", "spy", "square", "sad", "-odd");
+
+        for (int i = 0; i < params.length; i++) {
+            paramsList.add(params[i]);
+            if (params[i].charAt(0) == '-') {
+                opositeList.add(params[i]);
+            }
+        }
+
+        for (int i = 0; i < paramsList.size(); i++) {
+            if (magicNumberNegativeNames().contains(paramsList.get(i))) {
+                String negativeName = paramsList.get(i);
+                int indexOfNegativeName = magicNumberNegativeNames().indexOf(negativeName);
+                String opositName = magicNumberNames().get(indexOfNegativeName);
+                if (paramsList.contains(opositName)) {
+                    mutualityStrList.add(opositName.toUpperCase());
+                    mutualityStrList.add(negativeName.toUpperCase());
+                }
+            }
+        }
+
+        for (int i = 0; i < firstRuleList.size(); i++) {
+            if (paramsList.contains(firstRuleList.get(i))) {
+                if (paramsList.contains(secondRuleList.get(i))) {
+                    mutualityStrList.add(firstRuleList.get(i).toUpperCase());
+                    mutualityStrList.add(secondRuleList.get(i).toUpperCase());
+                }
+            }
+        }
+
+        mutualityStrList = (ArrayList) mutualityStrList.stream().distinct().collect(Collectors.toList());
+        return (ArrayList) mutualityStrList;
+    }
+
+    private static boolean isItEven(long nr) {
+        final int checkIfEven = 2;
+        return nr % checkIfEven == 0;
+    }
+
+    private static boolean isItBuzz(long nr) {
+        final int buzzNr = 7;
+        final int sizeOfUserInput = String.valueOf(nr).length();
+        final int userNrEnd = Integer.parseInt(String.valueOf(nr).substring(sizeOfUserInput - 1));
+        return nr % buzzNr == 0 || userNrEnd == buzzNr;
+    }
+
+    private static boolean isItDuck(long nr) {
+        String userNrText = String.valueOf(nr);
+        return userNrText.contains("0");
+    }
+
+    private static boolean isItPalindromic(long nr) {
+        return String.valueOf(nr).equals(String.valueOf(
+                new StringBuilder(String.valueOf(nr)).reverse()));
+    }
+
+    private static boolean isItGapful(long nr) {
+        if (String.valueOf(nr).length() < 3) {
+            return false;
+        } else {
+            String numberStr = String.valueOf(nr);
+            char firstNrCh = numberStr.charAt(0);
+            char lastNrCh = numberStr.charAt(numberStr.length() - 1);
+            int reminderNr = Integer.parseInt("" + firstNrCh + lastNrCh);
+            return nr % reminderNr == 0;
+        }
+    }
+
+    private static boolean isItSpy(long nr) {
+        String num = String.valueOf(nr);
+        long getFirstNr = Long.parseLong(String.valueOf(num.charAt(0)));
+        long numSum = getFirstNr;
+        long numMulti = getFirstNr;
+        for (int i = 1; i < num.length(); i++) {
+            long getNr = Long.parseLong(String.valueOf(num.charAt(i)));
+            numMulti *= getNr;
+            numSum += getNr;
+        }
+        return numMulti == numSum;
+    }
+
+    private static boolean isItSquare(long nr) {
+        long sqrt = (long) Math.sqrt(nr);
+        return nr % sqrt == 0 && nr / sqrt == sqrt;
+    }
+
+    private static boolean isItSunny(long nr) {
+        long n1 = nr + 1;
+        long sunny = (long) Math.sqrt(n1);
+        return n1 % sunny == 0 && n1 / sunny == sunny;
+    }
+
+    private static boolean isItJumping(long nr) {
+        String NumtoStr = String.valueOf(nr);
+        boolean isItJumpingNumber = true;
+        int[] numArr = new int[NumtoStr.length()];
+        Arrays.setAll(numArr, i -> Integer.parseInt(String.valueOf(NumtoStr.charAt(i))));
+        for (int i = 1; i < numArr.length; i++) {
+            int temp = numArr[i];
+            int tempS = numArr[i - 1] + 1;
+            int tempL = numArr[i - 1] - 1;
+            if (tempS != temp && tempL != temp) {
+                isItJumpingNumber = false;
+                break;
+            }
+        }
+        return isItJumpingNumber;
+    }
+
+    private static boolean isItHappy(long nr) {
+        long tempUserNr = 0;
+        String input = String.valueOf(nr);
+        String[] inputStrArr = input.split("");
+        int numbersSize = inputStrArr.length;
+        long temp;
+        List<Long> allLongsList = new LinkedList<>();
+        while (tempUserNr != 1) {
+            temp = 0;
+            for (int i = 0; i < numbersSize; i++) {
+                temp += Math.pow(Double.parseDouble(inputStrArr[i]), 2);
+            }
+            tempUserNr = temp;
+            if (allLongsList.contains(tempUserNr)) {
+                return false;
+            } else {
+                allLongsList.add(tempUserNr);
+
+                input = String.valueOf(temp);
+                inputStrArr = input.split("");
+                numbersSize = inputStrArr.length;
+            }
+        }
+
+        return tempUserNr == 1;
+    }
+}
